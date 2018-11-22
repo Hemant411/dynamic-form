@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Panel Collapse Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/dynamic-form.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Dynamic Form Plugin</h1>
+        <form method="POST">
+	        <div class="form-group" id="dynamic_form">
+                <div class="row">
+	                <div class="col-md-3">
+	                    <input type="text" name="p_name" id="p_name" placeholder="Enter Product Name" class="form-control">
+	                </div>
+	                <div class="col-md-3">
+	                    <input type="text" class="form-control" name="quantity" id="quantity" placeholder="Enter Product Quantity" onkeyup = "if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')";>
+	                </div>
+	                <div class="col-md-4">
+	                    <textarea class="form-control" rows="1" name="remarks" placeholder="Enter Remarks" id="remarks"></textarea>
+	                </div>
+	                <div class="button-group">
+	                    <a href="javascript:void(0)" class="btn btn-primary" id="plus5">Add More</a>
+	                    <a href="javascript:void(0)" class="btn btn-danger" id="minus5">Remove</a>
+	                </div>
+	            </div>
+            </div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <script>
+        $(document).ready(function() {
+        	var dynamic_form =  $("#dynamic_form").dynamicForm("#dynamic_form","#plus5", "#minus5", {
+		        limit:10,
+		        formPrefix : "dynamic_form",
+		        normalizeFullForm : false
+		    });
+
+        	dynamic_form.inject([{p_name: 'Hemant',quantity: 'hemant@techastha.com',remarks: 'Ahmedabad'},{p_name: 'Harshal',quantity: 'hemant@techastha.com',remarks: 'Ahmedabad'}]);
+
+		    $("#dynamic_form #minus5").on('click', function(){
+		    	$(this).closest('#dynamic_form').remove()
+		    });
+
+		    $('form').on('submit', function(event){
+	        	var values = {};
+				$.each($('form').serializeArray(), function(i, field) {
+				    values[field.name] = field.value;
+				});
+				console.log(values)
+        		event.preventDefault();
+        	})
+        });
+    </script>
+</body>
+</html>
