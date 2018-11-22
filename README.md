@@ -1,4 +1,3 @@
-# dynamic-form
 jQuery Dynamic Forms
 ====================
 
