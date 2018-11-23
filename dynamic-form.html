@@ -45,7 +45,11 @@
         	dynamic_form.inject([{p_name: 'Hemant',quantity: '123',remarks: 'testing remark'},{p_name: 'Harshal',quantity: '123',remarks: 'testing remark'}]);
 
 		    $("#dynamic_form #minus5").on('click', function(){
-		    	$(this).closest('#dynamic_form').remove()
+		    	var initDynamicId = $(this).closest('#dynamic_form').parent().find("[id^='dynamic_form']").length;
+		    	if (initDynamicId === 2) {
+		    		$(this).closest('#dynamic_form').next().find('#minus5').hide();
+		    	}
+		    	$(this).closest('#dynamic_form').remove();
 		    });
 
 		    $('form').on('submit', function(event){
