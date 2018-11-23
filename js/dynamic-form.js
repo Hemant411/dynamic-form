@@ -94,17 +94,17 @@ $.fn.dynamicForm = function (selectedTarget, plusSelector, minusSelector, option
 
 		/* Normalize template id attribute */
 		if (clone.attr("id")) {
-			clone.attr("id", clone.attr("id") + index);
+			clone.attr("id", clone.attr("id") + clones.length);
 		}
 
 		if (clone.effect && options.createColor && !disableEffect) {
 			clone.effect("highlight", {color:options.createColor}, options.duration);
 		}
-
+		
 		if (clones.length === 0){
 			source.find(minusSelector).show();
 		}
-		
+
 		return clone;
 	}
 	
@@ -115,10 +115,6 @@ $.fn.dynamicForm = function (selectedTarget, plusSelector, minusSelector, option
 	function dynamiseSubClones(clone){
 		$(subDynamicForm).each(function(){
 			var plus = this.getPlusSelector(), minus = this.getMinusSelector(), options = this.getOptions(), selector = this.selector;
-			
-			index = subDynamicIndex[subDynamicIndex.length-1];
-			subDynamicIndex.push(index + 1);
-
 			clone.find(this.selector).each(function(){
 				options = $.extend(
 					{
@@ -471,15 +467,29 @@ $.fn.dynamicForm = function (selectedTarget, plusSelector, minusSelector, option
 			 * @param {Object} formIndex
 			 * @param {Object} formValue
 			 */
+			 var z = 0;
 			function fillData(formIndex, formValue){
 				//Loop over data form array (each item will match a specific clone)
 				var mainForm = this;
 				//Shows required additional dynamic forms
 				if(formIndex > 0){
+					index = formIndex - 1;
 					mainForm.getSource().getPlus().trigger("click", ["disableEffect"]);
+					if (z === 0) {
+						mainForm.get(0).getSource().remove()						
+						mainForm.get(0).getSource().getClones()[1].find(minusSelector).hide()
+					}
 				}
-				var clone = mainForm.get(0).getSource().getClones()[formIndex];
-				
+
+				var newArray = mainForm.get(0).getSource().getClones();
+				var changeArray = [];
+				for (var i = 0; i < newArray.length; i++) {
+					$.each(data, function(key, value){
+						changeArray[key] =  newArray[i]
+					})
+				}
+
+				var clone = changeArray[formIndex];
 				$.each(formValue, function(index, value){
 					if($.isArray(value)){
 						mainForm = clone.find("#"+index);
@@ -488,7 +498,7 @@ $.fn.dynamicForm = function (selectedTarget, plusSelector, minusSelector, option
 						}
 
 					}else{
-						var formElements = mainForm.getSource().getClones()[formIndex].find("[origname='"+index+"']");
+						var formElements = changeArray[formIndex].find("[origname='"+index+"']");
 						if(formElements){
 							if(formElements.get(0).tagName.toLowerCase() == "input"){
 								/* Fill in radio input */
@@ -513,6 +523,7 @@ $.fn.dynamicForm = function (selectedTarget, plusSelector, minusSelector, option
 						}
 					}
 				});
+				z++;
 			}
 			//Loop over each form
 			$.each(data, $.proxy( fillData, source ));
